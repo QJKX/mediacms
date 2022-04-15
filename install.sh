@@ -30,14 +30,17 @@ else
     exit
 fi
 
-# install ffmpeg
-echo "Downloading and installing ffmpeg"
-wget -q https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
-mkdir -p tmp
-tar -xf ffmpeg-release-amd64-static.tar.xz --strip-components 1 -C tmp
-cp -v tmp/{ffmpeg,ffprobe,qt-faststart} /usr/local/bin
-rm -rf tmp ffmpeg-release-amd64-static.tar.xz
-echo "ffmpeg installed to /usr/local/bin"
+if [[ "$(uname -m)" == "x86_64" ]];then
+    echo "Downloading and installing ffmpeg"
+    wget -q https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
+    mkdir -p tmp
+    tar -xf ffmpeg-release-amd64-static.tar.xz --strip-components 1 -C tmp
+    cp -v tmp/{ffmpeg,ffprobe,qt-faststart} /usr/local/bin
+    rm -rf tmp ffmpeg-release-amd64-static.tar.xz
+    echo "ffmpeg installed to /usr/local/bin"
+else
+    echo "Not installing x86_64 ffmpeg."
+fi
 
 read -p "Enter portal URL, or press enter for localhost : " FRONTEND_HOST
 read -p "Enter portal name, or press enter for 'MediaCMS : " PORTAL_NAME
@@ -133,12 +136,18 @@ else
     echo "will not generate new DH params for url 'localhost', using default DH params"
 fi
 
-# Bento4 utility installation, for HLS
 
-cd /home/mediacms.io/mediacms
-wget http://zebulon.bok.net/Bento4/binaries/Bento4-SDK-1-6-0-637.x86_64-unknown-linux.zip
-unzip Bento4-SDK-1-6-0-637.x86_64-unknown-linux.zip
-mkdir /home/mediacms.io/mediacms/media_files/hls
+
+
+if [[ "$(uname -m)" == "x86_64" ]];then
+    echo "Downloading and installing Bento4 for HLS"
+    cd /home/mediacms.io/mediacms
+    wget http://zebulon.bok.net/Bento4/binaries/Bento4-SDK-1-6-0-637.x86_64-unknown-linux.zip
+    unzip Bento4-SDK-1-6-0-637.x86_64-unknown-linux.zip
+    mkdir /home/mediacms.io/mediacms/media_files/hls
+else
+    echo "Not installing x86_64 Bento4"
+fi
 
 # last, set default owner
 chown -R www-data. /home/mediacms.io/
